@@ -1,0 +1,195 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.ruoze.spark</groupId>
+  <artifactId>spark-train</artifactId>
+  <version>1.0</version>
+  <inceptionYear>2008</inceptionYear>
+  <properties>
+    <scala.version>2.11.8</scala.version>
+    <spark.version>2.4.2</spark.version>
+    <hadoop.version>2.6.0-cdh5.7.0</hadoop.version>
+
+    <!--spark example 配置相关属性-->
+    <sbt.project.name>examples</sbt.project.name>
+    <build.testJarPhase>none</build.testJarPhase>
+    <build.copyDependenciesPhase>package</build.copyDependenciesPhase>
+    <flume.deps.scope>provided</flume.deps.scope>
+    <hadoop.deps.scope>provided</hadoop.deps.scope>
+    <hive.deps.scope>provided</hive.deps.scope>
+    <parquet.deps.scope>provided</parquet.deps.scope>
+    <scala.binary.version>2.11</scala.binary.version>
+  </properties>
+
+  <repositories>
+    <!--添加cdhjar包仓库地址，不然无法下载cdh版本的hadoop jar-->
+    <repository>
+      <!--随便起-->
+      <id>cloudera</id>
+      <!--随便起-->
+      <name>cdhRespository</name>
+      <url>https://repository.cloudera.com/artifactory/cloudera-repos/ </url>
+    </repository>
+
+    <repository>
+      <id>scala-tools.org</id>
+      <name>Scala-Tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+
+    <!--添加scala依赖-->
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+    <!--添加spark core 依赖-->
+    <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-core_2.11</artifactId>
+      <version>${spark.version}</version>
+    </dependency>
+    <!--添加hadoop 客户端的依赖-->
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-client</artifactId>
+      <version>${hadoop.version}</version>
+    </dependency>
+
+
+    <!--spark example jars  开始-->
+    <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-sql_2.11</artifactId>
+      <version>${spark.version}</version>
+    </dependency>
+
+    <!--<dependency>-->
+      <!--<groupId>org.spark-project.spark</groupId>-->
+      <!--<artifactId>unused</artifactId>-->
+      <!--<version>1.0.0</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+
+    <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-streaming_2.11</artifactId>
+      <version>${spark.version}</version>
+    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.apache.spark</groupId>-->
+      <!--<artifactId>spark-mllib_${scala.binary.version}</artifactId>-->
+      <!--<version>${spark.version}</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.spark</groupId>-->
+      <!--<artifactId>spark-hive_${scala.binary.version}</artifactId>-->
+      <!--<version>${spark.version}</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.spark</groupId>-->
+      <!--<artifactId>spark-graphx_${scala.binary.version}</artifactId>-->
+      <!--<version>${spark.version}</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.spark</groupId>-->
+      <!--<artifactId>spark-streaming-flume_${scala.binary.version}</artifactId>-->
+      <!--<version>${spark.version}</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.spark</groupId>-->
+      <!--<artifactId>spark-streaming-kafka-0-8_${scala.binary.version}</artifactId>-->
+      <!--<version>${spark.version}</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.spark</groupId>-->
+      <!--<artifactId>spark-sql-kafka-0-10_${scala.binary.version}</artifactId>-->
+      <!--<version>${spark.version}</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.commons</groupId>-->
+      <!--<artifactId>commons-math3</artifactId>-->
+      <!--<version>3.4.1</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.scalacheck</groupId>-->
+      <!--<artifactId>scalacheck_${scala.binary.version}</artifactId>-->
+      <!--<version>1.12.5</version>-->
+      <!--<scope>test</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>com.github.scopt</groupId>-->
+      <!--<artifactId>scopt_${scala.binary.version}</artifactId>-->
+      <!--<version>3.3.0</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>com.twitter</groupId>-->
+      <!--<artifactId>parquet-hadoop-bundle</artifactId>-->
+      <!--<version>1.6.0</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+    <!--spark example jars  结束-->
+  </dependencies>
+
+  <build>
+    <sourceDirectory>src/main/scala</sourceDirectory>
+    <testSourceDirectory>src/test/scala</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <scalaVersion>${scala.version}</scalaVersion>
+          <args>
+            <arg>-target:jvm-1.5</arg>
+          </args>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <buildcommands>
+            <buildcommand>ch.epfl.lamp.sdt.core.scalabuilder</buildcommand>
+          </buildcommands>
+          <additionalProjectnatures>
+            <projectnature>ch.epfl.lamp.sdt.core.scalanature</projectnature>
+          </additionalProjectnatures>
+          <classpathContainers>
+            <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
+            <classpathContainer>ch.epfl.lamp.sdt.launching.SCALA_CONTAINER</classpathContainer>
+          </classpathContainers>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        <configuration>
+          <scalaVersion>${scala.version}</scalaVersion>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+</project>
