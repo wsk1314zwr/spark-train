@@ -28,15 +28,21 @@ object LastValueApp {
     即，迭代最后一个元素即可
      */
     data.groupByKey().sortByKey()
-      .map(x=>(x._1,lastValue(x._2)))
+      .map(x => (x._1, lastValue(x._2)))
+      .flatMap(x => {
+      for (v <- x._2) yield {
+        (x._1, v._1, v._2)
+      }
+    })
       .collect().foreach(println)
 
     //自定义一个方法
     //进来一个迭代器，输出一个lastValue
     def lastValue(values: Iterable[String]) = {
-//      for(value <- values)
-//        yield (value, values.last)
-      values.last
+      for (value <- values) yield {
+        (value, values.last)
+      }
+
     }
 
     sc.stop()
