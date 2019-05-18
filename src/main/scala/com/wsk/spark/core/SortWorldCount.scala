@@ -12,10 +12,21 @@ object SortWorldCount {
     val conf = new SparkConf()
     val sc = new SparkContext(conf)
 
-    val textRDD = sc.textFile(args(0))
+
+
+    val nums = sc.parallelize(List(1,3,5,7,8))
+    println(nums.partitions.length)
+    nums.foreach(println)
+
+
+
+    sc.parallelize(List(1,1,2,23,1,4,3)).map((_,1)).reduceByKey(_+_).repartition(1).groupByKey()
+    val textRDD = sc.textFile(args(0)).repartition(2)
     val wc = textRDD.flatMap(_.split("\\s+"))
       .map((_,1))
       .reduceByKey(_+_)
+    wc.cache()
+    wc.unpersist()
 
     //控制台打印输出
     //    wc.collect().foreach(println)

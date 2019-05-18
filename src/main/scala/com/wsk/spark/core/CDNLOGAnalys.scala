@@ -60,7 +60,7 @@ object CDNLOGAnalys {
     })
       .reduceByKey((a, b) => (a._1 + b._1, a._2 + b._2))
       .map(x => (x._1._1, (x._1._2, x._2._1, x._2._2)))
-      .groupByKey().repartition(1)
+      .groupByKey().coalesce(1).cache()
 
     var accessTop10 = doMainGroups.map(x => {
       val top3 = x._2.toArray.sortWith((a, b) => a._2 > b._2).take(10)
@@ -75,7 +75,7 @@ object CDNLOGAnalys {
     var trafficTopN = doMainGroups.map(x => {
       val topN = x._2.toArray.sortWith((a, b) => a._3 > b._3).take(10)
       (x._1, topN)
-    }).flatMapValues(x => x).repartition(1)
+    }).flatMapValues(x => x)
     trafficTopN.saveAsTextFile("data/cdnlog/output/job2")
 
 
@@ -92,7 +92,7 @@ object CDNLOGAnalys {
         case e: Exception => 0L
       }
       ((a(5), getHourStr(a(3))), traffic)
-    }).reduceByKey(_+_).map(x=>(x._1._1,x._1._2,x._2)).repartition(1)
+    }).reduceByKey(_+_).map(x=>(x._1._1,x._1._2,x._2)).coalesce(1)
     domainTimeRDD.saveAsTextFile("data/cdnlog/output/job3")
 
 
