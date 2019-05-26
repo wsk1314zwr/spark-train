@@ -12,7 +12,7 @@ object AccumulatorsApp {
     val conf = new SparkConf().setMaster("local[2]").setAppName("AccumulatorsApp")
     val sc = new SparkContext(conf)
 
-    val wskAccum = sc.longAccumulator("wsktets")
+    val wskAccum = sc.longAccumulator("wsktssets")
     val nums = sc.parallelize(List(1,2,3,4),2)
     println("driver端:计数器值："+wskAccum.value)
 

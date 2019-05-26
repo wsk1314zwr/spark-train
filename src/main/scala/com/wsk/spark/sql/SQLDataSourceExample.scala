@@ -24,7 +24,7 @@ object SQLDataSourceExample {
 
   private def runBasicDataSourceExample(spark: SparkSession): Unit = {
     // $example on:generic_load_save_functions$
-    val usersDF = spark.read.load("exampleData/users.parquet")
+    val usersDF = spark.read.load("exampleData/users.parquet").cache()
 //    usersDF.show
 //    +------+--------------+----------------+
 //    |  name|favorite_color|favorite_numbers|

@@ -10,20 +10,22 @@ object WordCountApp {
   def main(args: Array[String]): Unit = {
 
     val conf = new SparkConf()
-//      .setMaster("local[2]").setAppName("wc")
+      .setMaster("local[2]").setAppName("wc")
     val sc = new SparkContext(conf)
 
-    val textRDD = sc.textFile(args(0))
+    val textRDD = sc.textFile("data/etlLog/input/hadoop-click-log.txt")
     val wc = textRDD.flatMap(_.split(","))
       .map((_,1))
-      .reduceByKey(_+_)
+      .reduceByKey(_+_).collect()
 
     //控制台打印输出
-    wc.collect().foreach(println)
+//    wc.collect().foreach(println)
 
     //输出到hdfs上,可以进行压缩
-    wc.saveAsTextFile(args(1));
+//    wc.saveAsTextFile(args(1));
 
+
+    Thread.sleep(200000)
     sc.stop()
 
   }
