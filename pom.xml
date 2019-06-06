@@ -13,14 +13,14 @@
         <scalikejdbc.version>3.3.2</scalikejdbc.version>
 
         <!--spark example 配置相关属性-->
-<!--        <sbt.project.name>examples</sbt.project.name>-->
-<!--        <build.testJarPhase>none</build.testJarPhase>-->
-<!--        <build.copyDependenciesPhase>package</build.copyDependenciesPhase>-->
-<!--        <flume.deps.scope>provided</flume.deps.scope>-->
-<!--        <hadoop.deps.scope>provided</hadoop.deps.scope>-->
-<!--        <hive.deps.scope>provided</hive.deps.scope>-->
-<!--        <parquet.deps.scope>provided</parquet.deps.scope>-->
-<!--        <scala.binary.version>2.11</scala.binary.version>-->
+        <!--        <sbt.project.name>examples</sbt.project.name>-->
+        <!--        <build.testJarPhase>none</build.testJarPhase>-->
+        <!--        <build.copyDependenciesPhase>package</build.copyDependenciesPhase>-->
+        <!--        <flume.deps.scope>provided</flume.deps.scope>-->
+        <!--        <hadoop.deps.scope>provided</hadoop.deps.scope>-->
+        <!--        <hive.deps.scope>provided</hive.deps.scope>-->
+        <!--        <parquet.deps.scope>provided</parquet.deps.scope>-->
+        <!--        <scala.binary.version>2.11</scala.binary.version>-->
     </properties>
 
     <repositories>
@@ -175,7 +175,11 @@
             <version>${scalikejdbc.version}</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming-kafka-0-10_2.11</artifactId>
+            <version>${spark.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -219,6 +223,20 @@
                 </configuration>
             </plugin>
         </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <configuration>
+                        <descriptorRefs>
+                            <descriptorRef>jar-with-dependencies</descriptorRef>
+                        </descriptorRefs>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
     <reporting>
         <plugins>
