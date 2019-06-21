@@ -2,6 +2,7 @@ package com.wsk.spark.xianxia
 
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
+import org.apache.spark.util.LongAccumulator
 
 /**
   * Author: Michael PK   QQ: 1990218038
@@ -18,13 +19,20 @@ object EmpParser {
 
   // ds/df = spark.createDataFrame(rdd, schema)
 
-  def parseLog(log:String): Row = {
+  def parseLog(log:String,totalNum:LongAccumulator,errorNum:LongAccumulator): Row = {
     try{
+      totalNum.add(1)
       val splits = log.split("\t")
       val id = splits(0).toInt
       val name = splits(1)
-      val salary = splits(3).toDouble
-
+      var salary = 0d
+//      splits(3).toDouble
+      try{
+        //若该字段并不重要那么该数据不丢，给它附一个默认值
+        salary = splits(3).toDouble
+      }catch {
+        case e : Exception => salary = 0d
+      }
       val time = DateUtils.getTime(splits(2))
       val minute = DateUtils.parseToMinute(splits(2))
       val day = DateUtils.getDay(minute)
@@ -33,6 +41,7 @@ object EmpParser {
       Row(id,name,time,salary,day,hour)  // 6
     } catch {
       case e:Exception => e.printStackTrace()
+        errorNum.add(1)
         Row(0)
     }
   }
