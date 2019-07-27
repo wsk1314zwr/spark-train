@@ -55,8 +55,8 @@ object EmpEtlApp extends Logging {
         EmpParser.parseLog(x.getString(0), totalNum, errorNum)
       }).filter(_.length != 1), EmpParser.struct)
 
-      //将数据写到临时的目录 baseURL/2018091010/day=20180910/hour=10/xxx-1.log
-      //                   baseURL/2018091010/day=20180910/hour=11/xxx-1.log
+      //将数据写到临时的目录 baseURL/2018091011/day=20180910/hour=10/xxx-1.log
+      //                   baseURL/2018091011/day=20180910/hour=11/xxx-1.log
       eltDF.write.format("parquet")
         .option("compression", "none")
         .partitionBy("day", "hour")
@@ -69,7 +69,7 @@ object EmpEtlApp extends Logging {
 
 
       //TODO...mv 中，将文件rename到真实的目录，带上批次前缀
-      //  baseURL/day=20180910/hour=10/2018091010-1.log
+      //  baseURL/day=20180910/hour=10/2018091011-1.log
       //  baseURL/day=20180910/hour=11/2018091010-1.log
 
       val toltalCount = totalNum.count
