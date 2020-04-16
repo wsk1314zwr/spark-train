@@ -34,6 +34,8 @@ object FirstValueApp {
     (A,A1,A1)
     (A,A2,A1)
     (A,A3,A1)
+    ....
+    ....
      */
     data.groupByKey().sortByKey()
       .map(x => (x._1, firstValue(x._2))).flatMap(x => {

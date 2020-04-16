@@ -24,7 +24,7 @@ object DirectKafkaApp {
 
     val kafkaParams = Map[String, Object](
 //      "bootstrap.servers" -> "hadoop000:9092,hadoop000:9093,hadoop000:9094",
-      "bootstrap.servers" -> "10.199.151.15:9092,10.199.151.16:9092,10.199.151.17:9092",
+      "bootstrap.servers" -> "101.132.74.82:9092",
       "key.deserializer" -> classOf[StringDeserializer],
       "value.deserializer" -> classOf[StringDeserializer],
       "group.id" -> "test_spark_groupid",
@@ -33,7 +33,7 @@ object DirectKafkaApp {
     )
 
     // 如果多个topic，就使用逗号分隔
-    val topics = Array("wsk_test_2019")
+    val topics = Array("wsk_test_3")
     val stream = KafkaUtils.createDirectStream[String, String](
       ssc,
       PreferConsistent,
@@ -43,6 +43,7 @@ object DirectKafkaApp {
     stream.foreachRDD { rdd =>
 
       val offsetRanges = rdd.asInstanceOf[HasOffsetRanges].offsetRanges
+
       rdd.foreachPartition { iter =>
         val o: OffsetRange = offsetRanges(TaskContext.get.partitionId)
         println(s"${o.topic} ${o.partition} ${o.fromOffset} ${o.untilOffset}")
