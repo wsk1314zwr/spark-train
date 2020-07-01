@@ -9,7 +9,7 @@
         <spark.version>2.4.2</spark.version>
         <!--    <spark.version>1.6.0</spark.version>-->
         <hadoop.version>2.6.0-cdh5.7.0</hadoop.version>
-        <mysql.jdbc.version>5.1.38</mysql.jdbc.version>
+        <mysql.jdbc.version>8.0.16</mysql.jdbc.version>
         <scalikejdbc.version>3.3.2</scalikejdbc.version>
 
         <!--spark example 配置相关属性-->
