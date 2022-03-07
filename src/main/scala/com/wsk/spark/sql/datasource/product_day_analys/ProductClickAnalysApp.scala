@@ -80,19 +80,20 @@ object ProductClickAnalysApp extends Logging {
       , row_number().over(Window.partitionBy(col("area")).orderBy(col("click_count").desc)).as("rank"))
       .where(col("rank") <= 3).coalesce(1)
 
-
-    area_product_city_count_rank3_info.foreachPartition(partition => {
-      DBs.setupAll()
-      DB.localTx { implicit session =>
-        for (row <- partition) {
-          SQL("insert into product_area_click_rank values(?,?,?,?,?,?,?)")
-            .bind(row.getInt(0),row.getString(1),row.getInt(2),row.getString(3),row.getLong(4),row.getString(5),row.getInt(6))
-            .update().apply()
-        }
-
-      }
-      DBs.closeAll()
-    })
+//
+//    area_product_city_count_rank3_info.foreachPartition(partition => {
+//      DBs.setupAll()
+//      DB.localTx { implicit session =>
+//        while (partition.hasNext) {
+//          val row = partition.next()
+//          SQL("insert into product_area_click_rank values(?,?,?,?,?,?,?)")
+//                  .bind(row.getInt(0), row.getString(1), row.getInt(2), row.getString(3), row.getLong(4), row.getString(5), row.getInt(6))
+//                  .update().apply()
+//
+//        }
+//      }
+//      DBs.closeAll()
+//    })
     spark.stop()
 
   }
