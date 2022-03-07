@@ -5,8 +5,8 @@
     <artifactId>spark-train</artifactId>
     <version>1.0</version>
     <properties>
-        <scala.version>2.11.8</scala.version>
-        <spark.version>2.4.2</spark.version>
+        <scala.version>2.12.12</scala.version>
+        <spark.version>3.1.2</spark.version>
         <!--    <spark.version>1.6.0</spark.version>-->
         <hadoop.version>2.6.0-cdh5.7.0</hadoop.version>
         <mysql.jdbc.version>5.1.38</mysql.jdbc.version>
@@ -53,7 +53,7 @@
         <!--添加spark core 依赖-->
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.11</artifactId>
+            <artifactId>spark-core_2.12</artifactId>
             <version>${spark.version}</version>
         </dependency>
         <!--添加hadoop 客户端的依赖-->
@@ -67,7 +67,7 @@
         <!--spark example jars  开始-->
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.11</artifactId>
+            <artifactId>spark-sql_2.12</artifactId>
             <version>${spark.version}</version>
         </dependency>
 
@@ -80,7 +80,7 @@
 
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-streaming_2.11</artifactId>
+            <artifactId>spark-streaming_2.12</artifactId>
             <version>${spark.version}</version>
         </dependency>
         <!--<dependency>-->
@@ -153,13 +153,13 @@
 
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-hive_2.11</artifactId>
+            <artifactId>spark-hive_2.12</artifactId>
             <version>${spark.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-yarn_2.11</artifactId>
+            <artifactId>spark-yarn_2.12</artifactId>
             <version>${spark.version}</version>
         </dependency>
 
@@ -183,7 +183,7 @@
 
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-streaming-kafka-0-10_2.11</artifactId>
+            <artifactId>spark-streaming-kafka-0-10_2.12</artifactId>
             <version>${spark.version}</version>
         </dependency>
 
