@@ -211,6 +211,13 @@
             <version>2.0.1</version>
         </dependency>
 
+        <!-- 添加sentry依赖 -->
+        <dependency>
+            <groupId>org.apache.sentry</groupId>
+            <artifactId>sentry-binding-hive</artifactId>
+            <version>1.5.1-cdh5.16.1</version>
+        </dependency>
+
 
     </dependencies>
 
