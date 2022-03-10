@@ -20,7 +20,7 @@ object CustomOptimizerRules {
         //01 +- Range (0, 10, step=1, splits=Some(2))
 
         //使用自定义的逻辑优化规则
-        spark.experimental.extraOptimizations = MultiplyOptimizationRule :: Nil
+        spark.experimental.extraOptimizations ++= MultiplyOptimizationRule :: Nil
         val df3 = spark.range(20).toDF("counts")
         val df4 = df3.selectExpr("1 * counts")
         print(df4.queryExecution.optimizedPlan.numberedTreeString)    //输出其逻辑执行计划，
