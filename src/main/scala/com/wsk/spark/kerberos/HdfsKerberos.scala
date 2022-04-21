@@ -4,31 +4,44 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.security.UserGroupInformation
 
-class HdfsKerberos {
+object HdfsKerberos {
 
   /**
     * 进行hdfs kerberos 登陆验证
     */
   def hdfsKerberos(): Unit ={
     val conf = new Configuration()
-    val user = "wsk@HADOOP.COM"
-    val keyPath = "src/main/resources/cdh/wsk.keytab"
-    val krb5Path = "src/main/resources/cdh/krb5.conf"
+    kerberos(conf)
 
-    //加载xml文件
-    conf.addResource(new Path("src/main/resources/cdh/core-site.xml"))
-    conf.addResource(new Path("src/main/resources/cdh/hdfs-site.xml"))
-    //配置参数
-    conf.set("hadoop.security.authentication", "kerberos")
+    //需要添加如下两个文件才可访问hdfs，光加HADOOP_HOME以及HADOOP_CONF_DIR是没有用的，有这两个文件后可不需要HADOOP_HOME以及HADOOP_CONF_DIR的配置
+    conf.addResource(new Path("/opt/env/core-site.xml"))
+    conf.addResource(new Path("/opt/env/hdfs-site.xml"))
+    //访问hdfs代码
+    val fs = FileSystem.get(conf)
+    fs.globStatus(new Path("/spark/spark3/jars/*")).map(x=>{
+      println(x.getPath)
+    })
+
+  }
+
+  /**
+   * kerberos 登陆验证
+   */
+  def kerberos(conf: Configuration): Unit ={
+
+    val user = "hive/hz-hadoop-test-199-151-39@HADOOP.COM"
+    val keyPath = "/opt/env/hive.keytab"
+    val krb5Path = "/opt/env/krb5.conf"
 
     System.setProperty("java.security.krb5.conf", krb5Path)
+
+    conf.set("hadoop.security.authentication", "kerberos")
     UserGroupInformation.setConfiguration(conf)
     UserGroupInformation.loginUserFromKeytab(user,keyPath)
 
-    val fs = FileSystem.get(conf)
-    fs.globStatus(new Path("/user/wsk*")).map(x=>{
-      println(x.getLen)
-    })
+  }
 
+  def main(args: Array[String]): Unit = {
+    hdfsKerberos()
   }
 }

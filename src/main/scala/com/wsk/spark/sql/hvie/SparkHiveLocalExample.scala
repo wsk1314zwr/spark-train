@@ -1,10 +1,17 @@
 package com.wsk.spark.sql.hvie
 
 import java.io.File
-
 import org.apache.spark.sql.{Row, SparkSession}
 
-object SparkHiveExample {
+/**
+ * 操作本机的hive临时数仓
+ *
+ * 1）需要移除sentry的pom依赖，并放开spark-hive_2.12依赖的想干hive包
+ * 2）添加对应数仓的hive-site.xml(提供了是通过jdbc链接metasore库还是通过metastore服务读写hive metastore)文件
+ * 3）添加spark.sql.warehouse.dir的配置，指明hive的数据文件存储路径
+ * 4) enableHiveSupport(),开启支持hive数仓
+ */
+object SparkHiveLocalExample {
 
 
 
@@ -26,12 +33,12 @@ object SparkHiveExample {
     val warehouseLocation = new File("spark-warehouse").getAbsolutePath
 
     val spark = SparkSession
-      .builder()
-      .master("local[2]")
-      .appName("Spark Hive Example")
-      .config("spark.sql.warehouse.dir", warehouseLocation)
-      .enableHiveSupport()
-      .getOrCreate()
+            .builder()
+            .master("local[2]")
+            .appName("Spark Hive Example")
+            .config("spark.sql.warehouse.dir", warehouseLocation) //使用本地的hive
+            .enableHiveSupport()
+            .getOrCreate()
 
     import spark.implicits._
     import spark.sql
@@ -92,3 +99,4 @@ object SparkHiveExample {
   }
 
 }
+
