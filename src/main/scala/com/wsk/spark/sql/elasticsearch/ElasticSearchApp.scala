@@ -1,7 +1,5 @@
 package com.wsk.spark.sql.elasticsearch
 
-import com.wsk.spark.kerberos.HdfsKerberos
-import org.apache.hadoop.conf.Configuration
 import org.apache.spark.sql.SparkSession
 
 object ElasticSearchApp {
@@ -14,17 +12,23 @@ object ElasticSearchApp {
                 .appName("wsk-es-test")
                 .master("local[2]")
                 .getOrCreate()
-        val create_left = spark.sql(
+        spark.sql(
             """
               |CREATE TEMPORARY view mirrior_left
               |USING org.elasticsearch.spark.sql
               |OPTIONS (resource 'mysearch-mirror-md_cbb_info_dev-v4/_doc',
-              |          nodes '10.199.151.14', port '9200', net.http.auth.user 'mysearch',
-              |          net.http.auth.pass 'mysearch_123')""".stripMargin)
-        // 解析 binary数据会报错，将ScalaValueReader.scala 92行移除json解析应该能解决问题，但是由于是grandle项目，暂时放弃修改es-hadoop的源码,海洋已经更改那个源码了
-//        val frame = spark.sql("select  `customer_id`,`@del`,`@mt`,string(mirrior_left.`@data`) from mirrior_left")
-//        val rows = frame.collect()
-//        rows.foreach(println(_))
+              |          nodes '10.199.151.14',
+              |          port '9200',
+              |          net.http.auth.user 'mysearch',
+              |          net.http.auth.pass.encrypted 'true',
+              |          security.vault.appcode 'datark',
+              |          security.vault.gateway.url 'http://jupiter-gateway.servyou-stable.sit.91lyd.com',
+              |          security.vault.appkey 'NTBENDA1ODc4MTNFNDlFRkE1QUJEMTgyNjlFOTM5Rjc=',
+              |          security.vault.appsecret 'yihh+ahidJSH4gT0mUMpZw==',
+              |          net.http.auth.pass 'mysearch_es_pass')""".stripMargin)
+        val frame = spark.sql("select  `customer_id`,`@del`,`@mt`,string(mirrior_left.`@data`) from mirrior_left")
+        val rows = frame.collect()
+        rows.foreach(println(_))
 
 //        val mirror1_frame = spark.sql("select `customer_type`,`@del`,`@mt`,`@id`,`id`,`customer_id` from mirrior_left")
 //        mirror1_frame.printSchema()
