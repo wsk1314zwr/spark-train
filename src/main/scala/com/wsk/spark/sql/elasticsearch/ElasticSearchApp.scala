@@ -10,13 +10,13 @@ object ElasticSearchApp {
         // 通过sql 完成对es的读写操作
         val spark = SparkSession.builder()
                 .appName("wsk-es-test")
-                .master("local[2]")
+                .master("local[8]")
                 .getOrCreate()
         spark.sql(
             """
-              |CREATE TEMPORARY view mirrior_left
+              |CREATE TEMPORARY view mcdi_1
               |USING org.elasticsearch.spark.sql
-              |OPTIONS (resource 'mysearch-mirror-md_cbb_info_dev-v4/_doc',
+              |OPTIONS (resource 'mysearch-mirror-md_cbb_info_dev-v6/_doc',
               |          nodes '10.199.151.14',
               |          port '9200',
               |          net.http.auth.user 'mysearch',
@@ -26,7 +26,7 @@ object ElasticSearchApp {
               |          security.vault.appkey 'NTBENDA1ODc4MTNFNDlFRkE1QUJEMTgyNjlFOTM5Rjc=',
               |          security.vault.appsecret 'yihh+ahidJSH4gT0mUMpZw==',
               |          net.http.auth.pass 'mysearch_es_pass')""".stripMargin)
-        val frame = spark.sql("select  `customer_id`,`@del`,`@mt`,string(mirrior_left.`@data`) from mirrior_left")
+        val frame = spark.sql("select  count(cast(get_json_object(string(`@data`), '$.customer_id') as string))  from mcdi_1  where `@del` = false")
         val rows = frame.collect()
         rows.foreach(println(_))
 

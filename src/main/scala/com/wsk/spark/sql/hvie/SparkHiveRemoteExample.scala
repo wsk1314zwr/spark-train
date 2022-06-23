@@ -7,9 +7,9 @@ import org.apache.spark.sql.{Row, SparkSession}
 /**
  * 操作远程的hive数仓
  *
- * 1）需要移除sentry的pom依赖，并放开spark-hive_2.12依赖的想干hive包
- * 2）添加对应数仓的hive-site.xml(提供了是通过jdbc链接metasore库还是通过metastore服务读写hive metastore)文件
- * 3）添加core-site.xml和hdfs-site.xml,这两个文件指明存放hive的hadoop的部署信息，不然无法读写hive数据
+ * 1）需要移除sentry的pom依赖，并放开spark-hive_2.12依赖的相关的hive包
+ * 2）添加对应数仓的hive-site.xml(提供了是通过jdbc链接metasore数据库库或通过thrift连接metastore服务读写hive metastore)文件
+ * 3）添加core-site.xml和hdfs-site.xml,这两个文件指明存放hive数据的hadoop的部署信息，不然无法读写hive数据
  * 4）添加spark.sql.hive想关的配置，指明hive的版本以及hive的相关jar包路径，不然会因为代码冲突报异常
  * 5) enableHiveSupport(),开启支持hive数仓
  * 5）若hive开启了kerberos，idea调测需要进行kerberos登录认证

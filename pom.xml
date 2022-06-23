@@ -244,6 +244,8 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/elasticsearch-spark-30_2.12-7.12.0.jar</systemPath>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>commons-logging</groupId>-->
