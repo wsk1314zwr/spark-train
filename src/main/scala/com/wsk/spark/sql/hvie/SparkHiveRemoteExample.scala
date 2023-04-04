@@ -2,7 +2,7 @@ package com.wsk.spark.sql.hvie
 
 import com.wsk.spark.kerberos.HdfsKerberos
 import org.apache.hadoop.conf.Configuration
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 /**
  * 操作远程的hive数仓
@@ -24,6 +24,7 @@ object SparkHiveRemoteExample {
     // $example on:spark_hive$
     case class Record(key: Int, value: String)
     // $example off:spark_hive$
+
 
     def main(args: Array[String]) {
         // When working with Hive, one must instantiate `SparkSession` with Hive support, including
@@ -63,6 +64,13 @@ object SparkHiveRemoteExample {
 //        spark.sql("CREATE TEMPORARY VIEW mcbbi_3 USING org.elasticsearch.spark.sql OPTIONS (\n  resource 'mysearch-mirror-md_cbb_info_dev-v5/_doc',\n  nodes '10.199.151.14',\n  port '9200',\n  net.http.auth.user 'mysearch',\n  net.http.auth.pass 'mysearch_123'\n); ")
 //        val frame = spark.sql("select esProcess('cn.com.servyou.mysearch.core.process.processor.MVELFunctionUtils.vaultDecrypt(\"c20e1f58-5711-4900-882f-b154ad481d44\",\"xqy-nt-tax\",\"XQeUQJzI/HBIV4/rK5J/bXmXbH05aKRWuZjgGV3bGSA=\",this[\\'operator\\'])',string(mcbbi_3.`@data`)) from mcbbi_3 mcbbi_3;")
 //        frame.collect().foreach(print(_))
+
+        //explain 一会有错一会儿无错报错处理
+//        test1(sql)
+
+        //测试id 生成器udf函数
+        spark.sql("create temporary function idG as 'cn.com.wsk.hive.oec.function.IdGenerator' ")
+        sql("select idG('test')").show(10)
 
         sql("CREATE TABLE IF NOT EXISTS hive_test.wsk_test20220321 (key INT, value STRING) USING hive")
 //        sql("LOAD DATA LOCAL INPATH '/Users/skwang/Documents/workspace/workspace4/project/my_project/spark-train/exampleData/kv1.txt' INTO TABLE hive_test.wsk_test20220321")
@@ -119,5 +127,27 @@ object SparkHiveRemoteExample {
 
         spark.stop()
     }
+
+    def test1(sql: String => DataFrame):Unit = {
+        //explain 一会有错一会儿无错报错处理
+
+        sql(
+            """
+              |explain insert overwrite table xqy_period.rep_d_iit_pts_income_details
+              |select distinct s.id, s.income_item_code, s.income_item_name, s.customer_id, s.employee_id, s.declaration_id, s.type, from_unixtime(unix_timestamp()) create_date, dept_id, income
+              |  from (select id, income_item_code, income_item_name, customer_id, employee_id, declaration_id, '综合所得' as type, dept_id, income
+              |          from servyou_ods.ods_edw010_iit_complex_income_df
+              |                 where is_delete = 0 and `pt_d` = '${event_date}'
+              |         union all
+              |        select id, income_item_code, income_item_name, customer_id, employee_id, declaration_id, '分类所得' as type, dept_id, income
+              |          from servyou_ods.ods_edw010_iit_classification_income_df
+              |                 where is_delete = 0 and `pt_d` = '${event_date}'
+              |                 union all
+              |        select id, income_item_code, income_item_name, customer_id, employee_id, declaration_id, '非居民所得' as type, dept_id, income
+              |          from servyou_ods.ods_edw010_iit_non_residents_income_df
+              |                 where is_delete = 0 and `pt_d` = '${event_date}') s;
+              |""".stripMargin).show(false)
+    }
+
 
 }
