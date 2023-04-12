@@ -7,7 +7,7 @@ import org.apache.spark.sql.{Row, SparkSession}
  * 操作本机的hive临时数仓
  *
  * 1）需要移除sentry的pom依赖，并放开spark-hive_2.12依赖的想干hive包
- * 2）添加对应数仓的hive-site.xml(提供了是通过jdbc链接metasore库还是通过metastore服务读写hive metastore)文件
+ * 2）一定要移除集群hive的相关xml文件
  * 3）添加spark.sql.warehouse.dir的配置，指明hive的数据文件存储路径
  * 4) enableHiveSupport(),开启支持hive数仓
  */
@@ -42,8 +42,9 @@ object SparkHiveLocalExample {
 
     import spark.implicits._
     import spark.sql
-
-    sql("CREATE TABLE IF NOT EXISTS src (key INT, value STRING) USING hive")
+   // spark.sparkContext.setJobDescription("CREATE TABLE IF NOT EXISTS src (key INT, value STRING) USING hive")
+    val frame = sql("CREATE TABLE IF NOT EXISTS src (key INT, value STRING) USING hive")
+    val rows = frame.collect()
     sql("LOAD DATA LOCAL INPATH 'examples/src/main/resources/kv1.txt' INTO TABLE src")
 
     // Queries are expressed in HiveQL

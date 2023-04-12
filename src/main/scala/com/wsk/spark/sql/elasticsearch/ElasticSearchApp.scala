@@ -16,10 +16,11 @@ object ElasticSearchApp {
                 .enableHiveSupport()
                 .getOrCreate()
 
-        val sqlScript = FileUtils.readFileToString(new File("src/main/resources/sql/spark-es.sql"), "utf8")
+        val sqlScript = FileUtils.readFileToString(new File("src/main/resources/sql/spark-es-mvel.sql"), "utf8")
         sqlScript.split(";").foreach(sql => {
             System.out.println(sql)
-            spark.sql(sql)
+            val frame = spark.sql(sql)
+            frame.show()
         })
         spark.stop()
     }

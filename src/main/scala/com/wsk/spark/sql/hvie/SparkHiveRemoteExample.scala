@@ -69,14 +69,18 @@ object SparkHiveRemoteExample {
 //        test1(sql)
 
         //测试id 生成器udf函数
-        spark.sql("create temporary function idG as 'cn.com.wsk.hive.oec.function.IdGenerator' ")
-        sql("select idG('test')").show(10)
-
-        sql("CREATE TABLE IF NOT EXISTS hive_test.wsk_test20220321 (key INT, value STRING) USING hive")
+        //spark.sql("create temporary function idG as 'cn.com.wsk.hive.oec.function.IdGenerator' ")
+        //sql("select idG('test')").show(10)
+        //测试 设置job作业名字
+        spark.sparkContext.setJobDescription("CREATE TABLE IF NOT EXISTS hive_test.wsk_test20220322 (key INT, value STRING) USING hive")
+        val frame = sql("CREATE TABLE IF NOT EXISTS hive_test.wsk_test20220322 (key INT, value STRING) USING hive")
+        println(frame.queryExecution.toString())
 //        sql("LOAD DATA LOCAL INPATH '/Users/skwang/Documents/workspace/workspace4/project/my_project/spark-train/exampleData/kv1.txt' INTO TABLE hive_test.wsk_test20220321")
 
         // Queries are expressed in HiveQL
+        spark.sparkContext.setJobDescription("SELECT * FROM hive_test.wsk_pt_m_lifecycle_test7")
         sql("SELECT * FROM hive_test.wsk_pt_m_lifecycle_test7 ").collect().foreach(println(_))
+        spark.sparkContext.setJobDescription("SELECT * FROM hive_test.wsk_test20220321 ")
         sql("SELECT * FROM hive_test.wsk_test20220321 ").show(10)
         // +---+-------+
         // |key|  value|

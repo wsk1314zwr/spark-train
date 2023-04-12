@@ -16,3 +16,5 @@ gen
 /.idea
 /*.iml
 /target/
+/metastore_db/*
+/derby.log
