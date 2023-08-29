@@ -34,7 +34,7 @@ object LogAnalysApp {
         , splits(6)
         , splits(7).toLong)
       )
-      .toDF()
+      .toDF().repartition(10,$"name")
 
     logDF.printSchema()
     println("加载数据：" + logDF.count())

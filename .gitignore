@@ -18,3 +18,4 @@ gen
 /target/
 /metastore_db/*
 /derby.log
+/data/fixFile/outFile/*
