@@ -247,6 +247,51 @@
             <scope>system</scope>
             <systemPath>${pom.basedir}/lib/elasticsearch-spark-30_2.12-7.12.0.jar</systemPath>
         </dependency>
+
+        <!-- 添加spark操作hudi的包 -->
+        <dependency>
+            <groupId>org.apache.hudi</groupId>
+            <artifactId>hudi-spark3.1.2-bundle_2.12</artifactId>
+            <version>0.10.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/hudi-spark3.1.2-bundle_2.12-0.10.1.jar</systemPath>
+        </dependency>
+
+        <!-- 添加kyuubi的血缘解析插件 -->
+        <dependency>
+            <groupId>org.apache.kyuubi</groupId>
+            <artifactId>kyuubi-spark-lineage_2.12</artifactId>
+            <version>1.8.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/kyuubi-spark-lineage_2.12-1.8.0.jar</systemPath>
+        </dependency>
+
+        <!-- 添加kyuubi的血缘监听插件 -->
+        <dependency>
+            <groupId>cn.com.servyou.data.lineage</groupId>
+            <artifactId>spark-listener</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/spark-listener-1.0-SNAPSHOT-shade.jar</systemPath>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>commons-logging</groupId>-->
 <!--            <artifactId>commons-logging</artifactId>-->
