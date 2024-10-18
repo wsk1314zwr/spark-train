@@ -6,7 +6,7 @@
     <version>1.0</version>
     <properties>
         <scala.version>2.12.12</scala.version>
-        <spark.version>3.1.2</spark.version>
+        <spark.version>3.4.3</spark.version>
         <!--    <spark.version>1.6.0</spark.version>-->
         <!--  spark3默认使用的是hadoop3的包，使用hadoop2会报错的，公司使用的spark3已经重新编译支持hadoop2了，所以不会报错  -->
 <!--        <hadoop.version>2.6.0-cdh5.16.1</hadoop.version>-->

@@ -38,6 +38,7 @@ object SparkHiveRemoteExample extends Logging{
 
         // $example on:spark_hive$
         // warehouseLocation points to the default location for managed databases and tables
+        logInfo("这是测试哈哈哈哈")
         HdfsKerberos.kerberos(new Configuration())
         val spark = SparkSession
                 .builder()
@@ -46,8 +47,10 @@ object SparkHiveRemoteExample extends Logging{
                 .config("spark.sql.hive.metastore.version", "1.1.0")
                 .config("spark.sql.hive.metastore.jars", "path")
                 .config("spark.sql.hive.metastore.jars.path", "file:///opt/cloudera/parcels/CDH-5.16.1-1.cdh5.16.1.p0.3/lib/hive/lib/*")
+
                 .enableHiveSupport()
                 .getOrCreate()
+
         import spark.implicits._
         import spark.sql
 //        spark.sql("show databases").collect().foreach(println(_))
@@ -113,9 +116,7 @@ object SparkHiveRemoteExample extends Logging{
         // |Key: 0, Value: val_0|
         // |Key: 0, Value: val_0|
         // |Key: 0, Value: val_0|
-        // ...
 
-        // You can also use DataFrames to create temporary views within a SparkSession.
 //        val recordsDF = spark.createDataFrame((1 to 100).map(i => Record(i, s"val_$i")))
 //        recordsDF.createOrReplaceTempView("records")
 
@@ -130,8 +131,15 @@ object SparkHiveRemoteExample extends Logging{
         // ...
         // $example off:spark_hive$
 
-        // 测试8：测试注释最后一行是\结尾, 结论：\是续行符，导致认为下一行也是注释，深坑
+        // 测试2：测试注释最后一行是\结尾, 结论：\是续行符，导致认为下一行也是注释，深坑
         test2(spark)
+
+        // 测试3：直接 show databases 而非访问hdfs
+//        test3(spark)
+
+        // 测试4：直接 select 1 而非访问hdfs
+//        test4(spark)
+
         spark.stop()
     }
 
@@ -164,6 +172,37 @@ object SparkHiveRemoteExample extends Logging{
                   |select  ts.* from datark_dev.task_schedule_instance ts
                   |                    where   ts.instance_type=0  --wsk test\
                   |                               and ts.task_type in ('SQL', 'BATCH_SYNC', 'SPARK_SQL')
+                  |
+                  |
+                  |""".stripMargin).show()
+            Thread.sleep(5000)
+        } catch {
+            case e: Exception => logError("发生异常", e)
+        }
+    }
+
+
+    def test3(spark: SparkSession): Unit = {
+        // 测试8：测试注释最后一行是\结尾, 结论：\是续行符，导致认为下一行也是注释，深坑
+        try {
+            spark.sql(
+                """
+                  |show databases
+                  |
+                  |
+                  |""".stripMargin).show()
+            Thread.sleep(5000)
+        } catch {
+            case e: Exception => logError("发生异常", e)
+        }
+    }
+
+    def test4(spark: SparkSession): Unit = {
+        // 测试8：测试注释最后一行是\结尾, 结论：\是续行符，导致认为下一行也是注释，深坑
+        try {
+            spark.sql(
+                """
+                  |select 1
                   |
                   |
                   |""".stripMargin).show()
