@@ -2,6 +2,7 @@ package com.wsk.spark.sql.hvie
 
 import com.wsk.spark.kerberos.HdfsKerberos
 import org.apache.hadoop.conf.Configuration
+import org.apache.spark.internal.Logging
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 
 /**
@@ -18,7 +19,7 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
  * 8）需将pom的hadooop依赖设置为hadoop3，不然会有些hadoop类找不到
  */
 
-object SparkHiveRemoteExample {
+object SparkHiveRemoteExample extends Logging{
 
 
     // $example on:spark_hive$
@@ -72,16 +73,16 @@ object SparkHiveRemoteExample {
         //spark.sql("create temporary function idG as 'cn.com.wsk.hive.oec.function.IdGenerator' ")
         //sql("select idG('test')").show(10)
         //测试 设置job作业名字
-        spark.sparkContext.setJobDescription("CREATE TABLE IF NOT EXISTS hive_test.wsk_test20220322 (key INT, value STRING) USING hive")
-        val frame = sql("CREATE TABLE IF NOT EXISTS hive_test.wsk_test20220322 (key INT, value STRING) USING hive")
-        println(frame.queryExecution.toString())
+//        spark.sparkContext.setJobDescription("CREATE TABLE IF NOT EXISTS hive_test.wsk_test20220322 (key INT, value STRING) USING hive")
+//        val frame = sql("CREATE TABLE IF NOT EXISTS hive_test.wsk_test20220322 (key INT, value STRING) USING hive")
+//        println(frame.queryExecution.toString())
 //        sql("LOAD DATA LOCAL INPATH '/Users/skwang/Documents/workspace/workspace4/project/my_project/spark-train/exampleData/kv1.txt' INTO TABLE hive_test.wsk_test20220321")
 
         // Queries are expressed in HiveQL
-        spark.sparkContext.setJobDescription("SELECT * FROM hive_test.wsk_pt_m_lifecycle_test7")
-        sql("SELECT * FROM hive_test.wsk_pt_m_lifecycle_test7 ").collect().foreach(println(_))
-        spark.sparkContext.setJobDescription("SELECT * FROM hive_test.wsk_test20220321 ")
-        sql("SELECT * FROM hive_test.wsk_test20220321 ").show(10)
+//        spark.sparkContext.setJobDescription("SELECT * FROM hive_test.wsk_pt_m_lifecycle_test7")
+//        sql("SELECT * FROM hive_test.wsk_pt_m_lifecycle_test7 ").collect().foreach(println(_))
+//        spark.sparkContext.setJobDescription("SELECT * FROM hive_test.wsk_test20220321 ")
+//        sql("SELECT * FROM hive_test.wsk_test20220321 ").show(10)
         // +---+-------+
         // |key|  value|
         // +---+-------+
@@ -91,7 +92,7 @@ object SparkHiveRemoteExample {
         // ...
 
         // Aggregation queries are also supported.
-        sql("SELECT COUNT(*) FROM hive_test.wsk_test20220321 ").show()
+//        sql("SELECT COUNT(*) FROM hive_test.wsk_test20220321 ").show()
         // +--------+
         // |count(1)|
         // +--------+
@@ -99,13 +100,13 @@ object SparkHiveRemoteExample {
         // +--------+
 
         // The results of SQL queries are themselves DataFrames and support all normal functions.
-        val sqlDF = sql("SELECT key, value FROM hive_test.wsk_test20220321  WHERE key < 10 ORDER BY key")
+//        val sqlDF = sql("SELECT key, value FROM hive_test.wsk_test20220321  WHERE key < 10 ORDER BY key")
 
         // The items in DataFrames are of type Row, which allows you to access each column by ordinal.
-        val stringsDS = sqlDF.map {
-            case Row(key: Int, value: String) => s"Key: $key, Value: $value"
-        }
-        stringsDS.show()
+//        val stringsDS = sqlDF.map {
+//            case Row(key: Int, value: String) => s"Key: $key, Value: $value"
+//        }
+//        stringsDS.show()
         // +--------------------+
         // |               value|
         // +--------------------+
@@ -115,11 +116,11 @@ object SparkHiveRemoteExample {
         // ...
 
         // You can also use DataFrames to create temporary views within a SparkSession.
-        val recordsDF = spark.createDataFrame((1 to 100).map(i => Record(i, s"val_$i")))
-        recordsDF.createOrReplaceTempView("records")
+//        val recordsDF = spark.createDataFrame((1 to 100).map(i => Record(i, s"val_$i")))
+//        recordsDF.createOrReplaceTempView("records")
 
         // Queries can then join DataFrame data with data stored in Hive.
-        sql("SELECT * FROM records r JOIN hive_test.wsk_test20220321  s ON r.key = s.key").show()
+//        sql("SELECT * FROM records r JOIN hive_test.wsk_test20220321  s ON r.key = s.key").show()
         // +---+------+---+------+
         // |key| value|key| value|
         // +---+------+---+------+
@@ -129,6 +130,8 @@ object SparkHiveRemoteExample {
         // ...
         // $example off:spark_hive$
 
+        // 测试8：测试注释最后一行是\结尾, 结论：\是续行符，导致认为下一行也是注释，深坑
+        test2(spark)
         spark.stop()
     }
 
@@ -153,5 +156,21 @@ object SparkHiveRemoteExample {
               |""".stripMargin).show(false)
     }
 
+    def test2(spark: SparkSession): Unit = {
+        // 测试8：测试注释最后一行是\结尾, 结论：\是续行符，导致认为下一行也是注释，深坑
+        try {
+            spark.sql(
+                """
+                  |select  ts.* from datark_dev.task_schedule_instance ts
+                  |                    where   ts.instance_type=0  --wsk test\
+                  |                               and ts.task_type in ('SQL', 'BATCH_SYNC', 'SPARK_SQL')
+                  |
+                  |
+                  |""".stripMargin).show()
+            Thread.sleep(5000)
+        } catch {
+            case e: Exception => logError("发生异常", e)
+        }
+    }
 
 }
