@@ -42,11 +42,12 @@ object SparkHiveRemoteExample extends Logging {
                 .enableHiveSupport()
                 .config("spark.datark.security.authorization.query.env", "dev")
                 //spark sql 权限校验相关配置
-//                .config("spark.sql.extensions", "org.apache.submarine.spark.security.api.RangerSparkAuthzExtension")
+                .config("spark.sql.extensions", "org.apache.kyuubia.plugin.spark.authz.ranger.RangerSparkExtension")
                 //尝试排除规则，但是没成功，猜测SubmarineRowFilterExtension并不是AQE的规则列表的一部分，所以没有成功
 //                .config("spark.sql.adaptive.enabled=","true")
 //                .config("spark.sql.adaptive.optimizer.excludedRules", "org.apache.spark.sql.catalyst.optimizer.SubmarineRowFilterExtension")
-                .config("spark.datark.security.authorization.enable", "true")
+                .config("spark.3.4.3.datark.security.authorization.enable", "true")
+                .config("spark.3.4.3.datark.security.authorization.failed.throwableException", "true")
                 .config("spark.datark.security.authorization.user", "wsk")
 //                .config("spark.datark.security.authorization.url", "http://127.0.0.1:8080")
                 .config("spark.datark.security.authorization.url", "http://datark-manage-pc.datark-dev.devops.91lyd.com")
@@ -59,7 +60,8 @@ object SparkHiveRemoteExample extends Logging {
                 .config("spark.datark.security.authorization.query.type", "1")
                 .config("spark.datark.security.authorization.query.task.id", "1025")
                 .config("spark.datark.security.authorization.query.appcode", "mahq-datatest-002")
-                .config("spark.datark.security.authorization.rowFilter.enable", "true")
+                .config("spark.3.4.3.datark.security.authorization.rowFilter.enable", "true")
+
                 /**
                  * spark 集成hudi 并同步元数据到hive
                  * 1）开启如下两个config配置
@@ -200,7 +202,7 @@ object SparkHiveRemoteExample extends Logging {
 //        test35(spark)
 
         //测试36:task超时监控
-        test36(spark)
+//        test36(spark)
 
         //测试37：两次drop无权限的表 第一次拒绝，第二次成功问题分析定位
 //        test37(spark)
@@ -1150,6 +1152,57 @@ object SparkHiveRemoteExample extends Logging {
         } catch {
             case e: Exception => logError("发生异常", e)
         }
+    }
+
+    def test39(spark: SparkSession) = {
+        //测试39：读取视图未校验血缘问题排查
+        try {
+            spark.sql(
+                """
+                  |
+                  |insert
+                  |overwrite table zjl_test.kbc_re_yq_user_id_sample
+                  |select
+                  |distinct account_id,
+                  |'202020' pt_d
+                  |from
+                  |(
+                  |select
+                  |account_id
+                  |from
+                  |zjl_test.ads_mobile_consult_level_tag f
+                  |union all
+                  |select
+                  |e.account_id
+                  |from
+                  |(
+                  |select
+                  |mobile
+                  |from
+                  |zjl_test.ads_agent_mobile_relation_hb
+                  |union all
+                  |select
+                  |mobile
+                  |from
+                  |(
+                  |select
+                  |b.mobile
+                  |from
+                  |zjl_test.ads_company_consult_level_tag a
+                  |join zjl_test.ads_mobile_company_relation_base b on a.company_id = b.company_id
+                  |) c
+                  |) d
+                  |join zjl_test.ads_mobile_account_relation_base e on d.mobile = e.mobile
+                  |) g;
+                  |
+                  |
+                  |""".stripMargin)
+            Thread.sleep(5000)
+        } catch {
+            case e: Exception => e.printStackTrace()
+
+        }
+
     }
 
 }

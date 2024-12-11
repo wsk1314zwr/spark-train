@@ -234,34 +234,34 @@
 <!--        </dependency>-->
 
         <!-- 添加spark操作es的依赖 -->
-        <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch-spark-30_2.12</artifactId>
-            <version>7.12.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/lib/elasticsearch-spark-30_2.12-7.12.0.jar</systemPath>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.elasticsearch</groupId>-->
+<!--            <artifactId>elasticsearch-spark-30_2.12</artifactId>-->
+<!--            <version>7.12.0</version>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>*</groupId>-->
+<!--                    <artifactId>*</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${pom.basedir}/lib/elasticsearch-spark-30_2.12-7.12.0.jar</systemPath>-->
+<!--        </dependency>-->
 
         <!-- 添加spark操作hudi的包 -->
-        <dependency>
-            <groupId>org.apache.hudi</groupId>
-            <artifactId>hudi-spark3.1.2-bundle_2.12</artifactId>
-            <version>0.10.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/lib/hudi-spark3.1.2-bundle_2.12-0.10.1.jar</systemPath>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.hudi</groupId>-->
+<!--            <artifactId>hudi-spark3.1.2-bundle_2.12</artifactId>-->
+<!--            <version>0.10.1</version>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>*</groupId>-->
+<!--                    <artifactId>*</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${pom.basedir}/lib/hudi-spark3.1.2-bundle_2.12-0.10.1.jar</systemPath>-->
+<!--        </dependency>-->
 
         <!-- 添加kyuubi的血缘解析插件 -->
         <dependency>
@@ -291,6 +291,21 @@
             </exclusions>
             <scope>system</scope>
             <systemPath>${pom.basedir}/lib/spark-listener-1.0-SNAPSHOT-shade.jar</systemPath>
+        </dependency>
+
+        <!-- 添加kyuubi 权限校验插件 -->
+        <dependency>
+            <groupId>org.apache.kyuubi</groupId>
+            <artifactId>kyuubi-spark-authz_2.12</artifactId>
+            <version>1.10.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/kyuubi-spark-authz-shaded_2.12-1.10.0.jar</systemPath>
         </dependency>
 <!--        <dependency>-->
 <!--            <groupId>commons-logging</groupId>-->
