@@ -130,8 +130,11 @@ object SparkHiveRemoteExample extends Logging{
         // ...
         // $example off:spark_hive$
 
-        // 测试8：测试注释最后一行是\结尾, 结论：\是续行符，导致认为下一行也是注释，深坑
-        test2(spark)
+        // 测试2：测试注释最后一行是\结尾, 结论：\是续行符，导致认为下一行也是注释，深坑
+//        test2(spark)
+
+        // 测试3：spark3.4.3写的json string数据 使用spark3.1.2无法like过滤读取，丢失数据
+        test3(spark: SparkSession)
         spark.stop()
     }
 
@@ -157,7 +160,7 @@ object SparkHiveRemoteExample extends Logging{
     }
 
     def test2(spark: SparkSession): Unit = {
-        // 测试8：测试注释最后一行是\结尾, 结论：\是续行符，导致认为下一行也是注释，深坑
+        // 测试2：测试注释最后一行是\结尾, 结论：\是续行符，导致认为下一行也是注释，深坑
         try {
             spark.sql(
                 """
@@ -173,4 +176,28 @@ object SparkHiveRemoteExample extends Logging{
         }
     }
 
+
+    def test3(spark: SparkSession): Unit = {
+        // 测试3：spark3.4.3写的json string数据 使用spark3.1.2无法like过滤读取，丢失数据
+        try {
+            spark.sql(
+                """
+                  |select *
+                  |from servyou_ods.ods_edw102_data_taxpayer_df_wsk_test6 a
+                  |where a.nsrsbh like '%ab%'
+                  |
+                  |""".stripMargin).show()
+
+            spark.sql(
+                """
+                  |select count(1)
+                  |from servyou_ods.ods_edw102_data_taxpayer_df_wsk_test6 a
+                  |where a.nsrsbh like '%ab%'
+                  |
+                  |""".stripMargin).show()
+            Thread.sleep(5000)
+        } catch {
+            case e: Exception => logError("发生异常", e)
+        }
+    }
 }
