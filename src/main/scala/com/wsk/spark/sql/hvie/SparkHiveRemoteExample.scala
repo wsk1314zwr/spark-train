@@ -42,7 +42,7 @@ object SparkHiveRemoteExample extends Logging {
                 .enableHiveSupport()
                 .config("spark.datark.security.authorization.query.env", "dev")
                 //spark sql 权限校验相关配置
-                .config("spark.sql.extensions", "org.apache.kyuubia.plugin.spark.authz.ranger.RangerSparkExtension")
+//                .config("spark.sql.extensions", "org.apache.kyuubia.plugin.spark.authz.ranger.RangerSparkExtension")
                 //尝试排除规则，但是没成功，猜测SubmarineRowFilterExtension并不是AQE的规则列表的一部分，所以没有成功
 //                .config("spark.sql.adaptive.enabled=","true")
 //                .config("spark.sql.adaptive.optimizer.excludedRules", "org.apache.spark.sql.catalyst.optimizer.SubmarineRowFilterExtension")
@@ -61,6 +61,8 @@ object SparkHiveRemoteExample extends Logging {
                 .config("spark.datark.security.authorization.query.task.id", "1025")
                 .config("spark.datark.security.authorization.query.appcode", "mahq-datatest-002")
                 .config("spark.3.4.3.datark.security.authorization.rowFilter.enable", "true")
+                .config("spark.sql.adaptive.enabled", "false")
+                .config("spark.sql.autoBroadcastJoinThreshold", "-1")
 
                 /**
                  * spark 集成hudi 并同步元数据到hive
@@ -76,8 +78,8 @@ object SparkHiveRemoteExample extends Logging {
                  * 2)将血缘解析插件放入spark的cp
                  * 3)将血缘事件监听的插件放入spark的cp
                  */
-                .config("spark.sql.queryExecutionListeners", "org.apache.kyuubi.plugin.lineage2.SparkOperationLineageQueryExecutionListener")
-                .config("spark.extraListeners", "cn.com.servyou.data.lineage.spark.listener.SparkLineageEventListener")
+//                .config("spark.sql.queryExecutionListeners", "org.apache.kyuubi.plugin.lineage2.SparkOperationLineageQueryExecutionListener")
+//                .config("spark.extraListeners", "cn.com.servyou.data.lineage.spark.listener.SparkLineageEventListener")
                 //开启task超时监控
                 .config("spark.datark.task.run.timeout.monitor.enable", "true")
                 .config("spark.datark.task.run.timeout.minute", "1")
@@ -210,6 +212,11 @@ object SparkHiveRemoteExample extends Logging {
         //测试38：生产orc文件无法正确读取
         //test38(spark)
 
+        //测试40：create table  xxxx  as 方式，虽然子查询使用到select * 但是实际只用部分字段，也会校验所有字段权限问题分析
+//        test40(spark)
+
+        //测试41：spark3.4.3创建的hive表，低版本的hive修改表描述后，spark读取依旧是旧的问题定位分析
+        test41(spark)
 
         spark.stop()
 
@@ -1203,6 +1210,59 @@ object SparkHiveRemoteExample extends Logging {
 
         }
 
+    }
+
+    def test40(spark: SparkSession) = {
+        //测试41：spark3.4.3创建的hive表，低版本的hive修改表描述后，spark读取依旧是旧的问题定位分析
+        try {
+            spark.sql(
+                """
+                  |
+                  |DROP TABLE if  EXISTS default.table_c
+                  |
+                  |""".stripMargin)
+            spark.sql(
+                """
+                  |CREATE TABLE if NOT EXISTS default.table_c STORED AS parquet TBLPROPERTIES('parquet.compression' = 'SNAPPY') AS
+                  |SELECT
+                  |  a.*,
+                  |  b.group_type
+                  |FROM
+                  |  default.table_a a
+                  |LEFT JOIN
+                  |  (SELECT * from default.table_b  WHERE pt_d = '${bizdate}') b
+                  |ON a.follow_object_id =b.cc_id;
+                  |
+                  |
+                  |""".stripMargin).explain()
+            Thread.sleep(5000)
+        } catch {
+            case e: Exception => logError("发生异常", e)
+        }
+    }
+
+    def test41(spark: SparkSession) = {
+        //测试40：create table  xxxx  as 方式，虽然子查询使用到select * 但是实际只用部分字段，也会校验所有字段权限问题分析
+        try {
+//            spark.sql(
+//                """
+//                  |
+//                  | SHOW CREATE TABLE  zjl_test.ods_no_prod_paimon_test1_df_wsk_test;
+//                  |
+//                  |
+//                  |""".stripMargin).show(10,false)
+//            Thread.sleep(5000)
+            spark.sql(
+                """
+                  |
+                  |ALTER TABLE zjl_test.ods_no_prod_paimon_test1_df_wsk_test CHANGE COLUMN zts zts DECIMAL(9,0) COMMENT '3333999';
+                  |
+                  |
+                  |""".stripMargin).show(10,false)
+            Thread.sleep(5000)
+        } catch {
+            case e: Exception => logError("发生异常", e)
+        }
     }
 
 }
