@@ -216,7 +216,10 @@ object SparkHiveRemoteExample extends Logging {
 //        test40(spark)
 
         //测试41：spark3.4.3创建的hive表，低版本的hive修改表描述后，spark读取依旧是旧的问题定位分析
-        test41(spark)
+//        test41(spark)
+
+        //测试42：spark3.4.3创建的hive表字段区分了大小写，insert时若指定了大写字段会报字段已经存在错误
+        test42(spark)
 
         spark.stop()
 
@@ -1242,7 +1245,7 @@ object SparkHiveRemoteExample extends Logging {
     }
 
     def test41(spark: SparkSession) = {
-        //测试40：create table  xxxx  as 方式，虽然子查询使用到select * 但是实际只用部分字段，也会校验所有字段权限问题分析
+        //测试41：spark3.4.3创建的hive表，低版本的hive修改表描述后，spark读取依旧是旧的问题定位分析
         try {
 //            spark.sql(
 //                """
@@ -1256,6 +1259,31 @@ object SparkHiveRemoteExample extends Logging {
                 """
                   |
                   |ALTER TABLE zjl_test.ods_no_prod_paimon_test1_df_wsk_test CHANGE COLUMN zts zts DECIMAL(9,0) COMMENT '3333999';
+                  |
+                  |
+                  |""".stripMargin).show(10,false)
+            Thread.sleep(5000)
+        } catch {
+            case e: Exception => logError("发生异常", e)
+        }
+    }
+
+    def test42(spark: SparkSession) = {
+        //测试42：spark3.4.3创建的hive表字段区分了大小写，insert时若指定了大写字段会报字段已经存在错误
+        try {
+//            spark.sql(
+//                """
+//                  |
+//                  | SHOW CREATE TABLE  zjl_test.ods_no_prod_paimon_test1_df_wsk_test;
+//                  |
+//                  |
+//                  |""".stripMargin).show(10,false)
+//            Thread.sleep(5000)
+            spark.sql(
+                """
+                  |
+                  |insert into dzdz_fpxx_jxfp_tmp (CD)
+                  |select 1 as cd;
                   |
                   |
                   |""".stripMargin).show(10,false)
