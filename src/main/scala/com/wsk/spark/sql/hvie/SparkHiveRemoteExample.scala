@@ -1,4 +1,4 @@
-package org.apache.submarine.example.sql
+package com.wsk.spark.sql.hvie
 
 import com.wsk.spark.kerberos.HdfsKerberos
 import org.apache.hadoop.conf.Configuration
@@ -220,7 +220,6 @@ object SparkHiveRemoteExample extends Logging {
 
         //测试42：spark3.4.3创建的hive表字段区分了大小写，insert时若指定了大写字段会报字段已经存在错误
         test42(spark)
-
         spark.stop()
 
     }
@@ -1216,7 +1215,7 @@ object SparkHiveRemoteExample extends Logging {
     }
 
     def test40(spark: SparkSession) = {
-        //测试41：spark3.4.3创建的hive表，低版本的hive修改表描述后，spark读取依旧是旧的问题定位分析
+        //测试40：create table  xxxx  as 方式，虽然子查询使用到select * 但是实际只用部分字段，也会校验所有字段权限问题分析
         try {
             spark.sql(
                 """
@@ -1246,6 +1245,7 @@ object SparkHiveRemoteExample extends Logging {
 
     def test41(spark: SparkSession) = {
         //测试41：spark3.4.3创建的hive表，低版本的hive修改表描述后，spark读取依旧是旧的问题定位分析
+        //结论：原来修改的spark源码还原回去，此问题，变成spark 修改表描述就可以绕过
         try {
 //            spark.sql(
 //                """
@@ -1270,20 +1270,33 @@ object SparkHiveRemoteExample extends Logging {
 
     def test42(spark: SparkSession) = {
         //测试42：spark3.4.3创建的hive表字段区分了大小写，insert时若指定了大写字段会报字段已经存在错误
+        //，--定位原因是为了解决41的问题，产生了代码bug导致,触发场景：字段描述超过256字符+大写
+        //结论：原来修改的spark源码还原回去，此问题，变成spark 修改表描述就可以绕过
         try {
-//            spark.sql(
-//                """
-//                  |
-//                  | SHOW CREATE TABLE  zjl_test.ods_no_prod_paimon_test1_df_wsk_test;
-//                  |
-//                  |
-//                  |""".stripMargin).show(10,false)
-//            Thread.sleep(5000)
+            spark.sql(
+                """
+                  |INSERT INTO DEFAULT.DZDZ_FPXX_JXFP_TMP5(FPZJ,FPLB_DM,CD) SELECT '12','22','32';
+                  |""".stripMargin)
+            spark.sql(
+                """
+                  |drop table if exists dzdz_fpxx_jxfp_tmp;
+                  |""".stripMargin)
+
+            spark.sql(
+                """
+                  |create table dzdz_fpxx_jxfp_tmp(
+                  |    fpzj STRING COMMENT  '发票主键(业务主键，fpdm+fphm)',
+                  |    CD STRING COMMENT  '产地'
+                  |)
+                  |STORED AS ORC
+                  |TBLPROPERTIES ('orc.compress' = 'SNAPPY')
+                  |""".stripMargin)
+
             spark.sql(
                 """
                   |
-                  |insert into dzdz_fpxx_jxfp_tmp (CD)
-                  |select 1 as cd;
+                  |insert into dzdz_fpxx_jxfp_tmp (FPZJ,CD)
+                  |select '1',1 ;
                   |
                   |
                   |""".stripMargin).show(10,false)
@@ -1292,5 +1305,4 @@ object SparkHiveRemoteExample extends Logging {
             case e: Exception => logError("发生异常", e)
         }
     }
-
 }
