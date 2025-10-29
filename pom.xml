@@ -234,19 +234,19 @@
         <!--        </dependency>-->
 
         <!-- 添加spark操作es的依赖 -->
-        <!--        <dependency>-->
-        <!--            <groupId>org.elasticsearch</groupId>-->
-        <!--            <artifactId>elasticsearch-spark-30_2.12</artifactId>-->
-        <!--            <version>7.12.0</version>-->
-        <!--            <exclusions>-->
-        <!--                <exclusion>-->
-        <!--                    <groupId>*</groupId>-->
-        <!--                    <artifactId>*</artifactId>-->
-        <!--                </exclusion>-->
-        <!--            </exclusions>-->
-        <!--            <scope>system</scope>-->
-        <!--            <systemPath>${pom.basedir}/lib/elasticsearch-spark-30_2.12-7.12.0.jar</systemPath>-->
-        <!--        </dependency>-->
+<!--                <dependency>-->
+<!--                    <groupId>org.elasticsearch</groupId>-->
+<!--                    <artifactId>elasticsearch-spark-30_2.12</artifactId>-->
+<!--                    <version>7.12.0</version>-->
+<!--                    <exclusions>-->
+<!--                        <exclusion>-->
+<!--                            <groupId>*</groupId>-->
+<!--                            <artifactId>*</artifactId>-->
+<!--                        </exclusion>-->
+<!--                    </exclusions>-->
+<!--                    <scope>system</scope>-->
+<!--                    <systemPath>${pom.basedir}/lib/elasticsearch-spark-30_2.12-8.17.0.jar</systemPath>-->
+<!--                </dependency>-->
 
         <!-- 添加spark操作hudi的包 -->
         <!--        <dependency>-->
