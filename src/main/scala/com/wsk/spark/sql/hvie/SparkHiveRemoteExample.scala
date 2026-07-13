@@ -96,7 +96,7 @@ object SparkHiveRemoteExample extends Logging {
 //        test2(spark)
 
         //测试3：测试 是否有权限create | drop databases;
-//        test3(spark)
+        test3(spark)
 
         //测试4：测试 show tables 是否只展示有权限访问的表
 //        test4(spark)
@@ -219,7 +219,7 @@ object SparkHiveRemoteExample extends Logging {
 //        test41(spark)
 
         //测试42：spark3.4.3创建的hive表字段区分了大小写，insert时若指定了大写字段会报字段已经存在错误
-        test42(spark)
+//        test42(spark)
         spark.stop()
 
     }
@@ -242,15 +242,17 @@ object SparkHiveRemoteExample extends Logging {
 
     def test3(spark: SparkSession) = {
         //测试3：测试 是否有权限create | drop databases;
+        // 先清理残留，避免 IF NOT EXISTS 误判“已存在”后跳过 create，导致后续 drop 报 NoSuchObjectException
+        spark.sql("drop database if exists wsk_test222")
         try {
             spark.sql("create database wsk_test222")
         } catch {
-            case _: Exception => logError("create databases 权限校验失败")
+            case e: Exception => logError(s"create databases 权限校验失败: ${e.getMessage}")
         }
         try {
-            spark.sql("drop database wsk_test222")
+            spark.sql("drop database if exists wsk_test222")
         } catch {
-            case _: Exception => logError("drop databases 权限校验失败")
+            case e: Exception => logError(s"drop databases 权限校验失败: ${e.getMessage}")
         }
     }
 

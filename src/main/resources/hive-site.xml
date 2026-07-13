@@ -4,7 +4,7 @@
 <configuration>
   <property>
     <name>hive.metastore.uris</name>
-    <value>thrift://hz-hadoop-test-199-151-39:9083,thrift://hz-hadoop-test-199-151-40:9083</value>
+    <value>thrift://hz-hadoop-test-199-151-40:9083</value>
   </property>
   <property>
     <name>hive.metastore.client.socket.timeout</name>
